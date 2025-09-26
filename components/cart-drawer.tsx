@@ -4,10 +4,11 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useCart } from "@/lib/cart-context"
-import { ShoppingCart, X, Plus, Minus, Trash2, MessageCircle } from "lucide-react"
+import { ShoppingCart, X, Plus, Minus, Trash2 } from "lucide-react"
 
 export function CartDrawer() {
   const [isOpen, setIsOpen] = useState(false)
+  const [phone, setPhone] = useState("")
   const { state, dispatch } = useCart()
 
   const updateQuantity = (id: string, quantity: number) => {
@@ -22,30 +23,34 @@ export function CartDrawer() {
     dispatch({ type: "CLEAR_CART" })
   }
 
-  const sendToWhatsApp = () => {
-    const ownerPhoneNumber = "+234 8135322510" // Replace with actual owner's phone number
+  const placeOrder = async () => {
+    if (!phone.trim()) {
+      alert("Please enter your phone number before placing an order")
+      return
+    }
 
-    let message = "🛒 *New Order from Lumea*\n\n"
-    message += "📋 *Order Details:*\n"
+    try {
+      const res = await fetch("/api/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone,
+          items: state.items,
+          totalItems: state.itemCount,
+        }),
+      })
 
-    state.items.forEach((item, index) => {
-      message += `${index + 1}. Product ID: ${item.id}\n`
-      message += `   Category: ${item.category}\n`
-      message += `   Quantity: ${item.quantity}\n`
-      message += `   Image: ${item.image}\n\n`
-    })
-
-    message += `📦 *Total Items: ${state.itemCount}*\n\n`
-    message += "📞 Please discuss pricing and confirm this order with delivery details."
-
-    const encodedMessage = encodeURIComponent(message)
-    const whatsappUrl = `https://wa.me/${ownerPhoneNumber.replace("+", "")}?text=${encodedMessage}`
-
-    window.open(whatsappUrl, "_blank")
-
-    // Clear cart after sending to WhatsApp
-    clearCart()
-    setIsOpen(false)
+      if (res.ok) {
+        alert("Order placed successfully! We’ll contact you shortly.")
+        clearCart()
+        setIsOpen(false)
+      } else {
+        alert("Something went wrong while placing your order.")
+      }
+    } catch (err) {
+      console.error("Order error:", err)
+      alert("Network error. Please try again.")
+    }
   }
 
   return (
@@ -68,7 +73,7 @@ export function CartDrawer() {
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Header - Fixed */}
+        {/* Header */}
         <div className="flex items-center justify-between p-4 border-b bg-background">
           <h2 className="text-lg font-semibold">Shopping Cart ({state.itemCount})</h2>
           <Button variant="ghost" size="icon" onClick={() => setIsOpen(false)}>
@@ -76,8 +81,8 @@ export function CartDrawer() {
           </Button>
         </div>
 
-        {/* Content Area */}
-        <div className="h-[calc(100vh-140px)] overflow-y-auto p-4">
+        {/* Content */}
+        <div className="h-[calc(100vh-180px)] overflow-y-auto p-4">
           {state.items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
@@ -98,7 +103,7 @@ export function CartDrawer() {
                       />
                     </div>
 
-                    {/* Product Info */}
+                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between items-start mb-2">
                         <div>
@@ -115,7 +120,7 @@ export function CartDrawer() {
                         </Button>
                       </div>
 
-                      {/* Quantity Controls */}
+                      {/* Quantity */}
                       <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
@@ -143,28 +148,34 @@ export function CartDrawer() {
           )}
         </div>
 
-        {/* Footer - Fixed at bottom */}
+        {/* Footer */}
         {state.items.length > 0 && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-background">
-            <div className="space-y-3">
-              <div className="flex justify-between items-center">
-                <span className="font-medium">Total Items:</span>
-                <span className="font-bold text-lg">{state.itemCount}</span>
-              </div>
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t bg-background space-y-3">
+            {/* Phone Input */}
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Enter your phone number"
+              className="w-full border rounded-lg px-3 py-2 text-sm"
+            />
 
-              <div className="grid grid-cols-1 gap-2">
-                <Button className="w-full bg-green-600 hover:bg-green-700" onClick={sendToWhatsApp}>
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Order via WhatsApp
-                </Button>
-                <Button variant="outline" className="w-full bg-transparent" onClick={clearCart}>
-                  Clear Cart
-                </Button>
-              </div>
+            <div className="flex justify-between items-center">
+              <span className="font-medium">Total Items:</span>
+              <span className="font-bold text-lg">{state.itemCount}</span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-2">
+              <Button className="w-full bg-green-600 hover:bg-green-700" onClick={placeOrder}>
+                Order
+              </Button>
+              <Button variant="outline" className="w-full bg-transparent" onClick={clearCart}>
+                Clear Cart
+              </Button>
             </div>
           </div>
         )}
       </div>
     </>
   )
-}
+            }
