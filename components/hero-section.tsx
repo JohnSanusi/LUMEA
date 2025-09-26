@@ -20,7 +20,7 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Button size="lg" className="text-md px-8 py-6 group">
               <Link href="#categories">
-               Explore Collection <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+               Explore Collection 
                 </Link>
             </Button>
                 
