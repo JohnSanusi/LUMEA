@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     // For now, we'll simulate the email sending and log the data
 
     const emailData = {
-      to: "admin@lumea.com", // Replace with actual admin email
+      to: "sanusijohn0@gmail.com", // Replace with actual admin email
       subject: `New Contact Form Submission from ${firstName} ${lastName}`,
       html: `
         <h2>New Contact Form Submission</h2>
