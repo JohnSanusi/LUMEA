@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import Link from "next/link"
 
 const categories = [
   {
@@ -54,7 +55,11 @@ export function CategoriesSection() {
                     <h3 className="text-xl font-bold text-white mb-2">{category.name}</h3>
                     <p className="text-white/90 text-sm mb-4">{category.description}</p>
                     <Button variant="secondary" size="sm" className="w-full">
-                      Shop Now
+                    <Link href={category.href} className="text-2xl font-bold text-foreground">
+            Shop Now
+          </Link>
+      
+                      
                     </Button>
                   </div>
                 </div>
