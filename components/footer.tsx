@@ -13,20 +13,7 @@ export function Footer() {
               Discover your perfect style with our curated collections of premium fashion, accessories, and lifestyle
               products.
             </p>
-            <div className="flex space-x-4">
-              <Link href="#" className="text-background/80 hover:text-background transition-colors">
-                <Facebook className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="text-background/80 hover:text-background transition-colors">
-                <Instagram className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="text-background/80 hover:text-background transition-colors">
-                <Twitter className="h-5 w-5" />
-              </Link>
-              <Link href="#" className="text-background/80 hover:text-background transition-colors">
-                <Youtube className="h-5 w-5" />
-              </Link>
-            </div>
+            
           </div>
 
           {/* Quick Links */}
@@ -83,37 +70,11 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Support */}
-          <div>
-            <h4 className="font-semibold mb-4">Support</h4>
-            <ul className="space-y-2">
-              <li>
-                <Link href="#" className="text-background/80 hover:text-background transition-colors">
-                  FAQ
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-background/80 hover:text-background transition-colors">
-                  Shipping
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-background/80 hover:text-background transition-colors">
-                  Returns
-                </Link>
-              </li>
-              <li>
-                <Link href="#" className="text-background/80 hover:text-background transition-colors">
-                  Size Guide
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
+          
 
         <div className="border-t border-background/20 mt-12 pt-8 text-center">
           <p className="text-background/80">
-            © 2024 Lumea. All rights reserved. Crafted with passion for modern living.
+            © 2025 Lumea. All rights reserved. Crafted with passion for modern living.
           </p>
         </div>
       </div>
