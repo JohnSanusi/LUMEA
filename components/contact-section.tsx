@@ -28,7 +28,7 @@ export function ContactSection() {
     setSubmitStatus("idle")
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch("https://lumea-backend.onrender.com/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
