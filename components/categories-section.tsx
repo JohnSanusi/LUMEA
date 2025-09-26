@@ -55,9 +55,9 @@ export function CategoriesSection() {
                     <h3 className="text-xl font-bold text-white mb-2">{category.name}</h3>
                     <p className="text-white/90 text-sm mb-4">{category.description}</p>
                     <Button variant="secondary" size="sm" className="w-full">
-                    <Link href={category.href} className="text-2xl font-bold text-foreground">
-            Shop Now
-          </Link>
+                      <Link href={category.href}>
+                         Shop Now
+                       </Link>
       
                       
                     </Button>
