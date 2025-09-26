@@ -23,7 +23,7 @@ export function CartDrawer() {
   }
 
   const sendToWhatsApp = () => {
-    const ownerPhoneNumber = "+1234567890" // Replace with actual owner's phone number
+    const ownerPhoneNumber = "+234 8135322510" // Replace with actual owner's phone number
 
     let message = "🛒 *New Order from Lumea*\n\n"
     message += "📋 *Order Details:*\n"
