@@ -13,7 +13,7 @@ export function Footer() {
               Discover your perfect style with our curated collections of premium fashion, accessories, and lifestyle
               products.
             </p>
-            
+            </div>
           </div>
 
           {/* Quick Links */}
