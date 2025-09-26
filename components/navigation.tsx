@@ -26,10 +26,10 @@ export function Navigation() {
             <Link href="/products" className="text-foreground hover:text-primary transition-colors">
               Products
             </Link>
-            <Link href="#about" className="text-foreground hover:text-primary transition-colors">
+            <Link href="/#about" className="text-foreground hover:text-primary transition-colors">
               About
             </Link>
-            <Link href="#contact" className="text-foreground hover:text-primary transition-colors">
+            <Link href="/#contact" className="text-foreground hover:text-primary transition-colors">
               Contact
             </Link>
           </div>
