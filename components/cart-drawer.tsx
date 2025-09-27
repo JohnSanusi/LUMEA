@@ -11,6 +11,8 @@ export function CartDrawer() {
   const [phone, setPhone] = useState("")
   const { state, dispatch } = useCart()
 
+  const BASE_URL = "https://lumea-frontend.vercel.app" // 👈 replace with your actual frontend domain
+
   const updateQuantity = (id: string, quantity: number) => {
     dispatch({ type: "UPDATE_QUANTITY", payload: { id, quantity } })
   }
@@ -29,13 +31,21 @@ export function CartDrawer() {
       return
     }
 
+    // 🔥 Normalize image paths to absolute URLs
+    const normalizedItems = state.items.map((item) => ({
+      ...item,
+      image: item.image?.startsWith("http")
+        ? item.image
+        : `${BASE_URL}${item.image}`,
+    }))
+
     try {
       const res = await fetch("https://lumea-backend.onrender.com/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone,
-          items: state.items,
+          items: normalizedItems,
           totalItems: state.itemCount,
         }),
       })
@@ -97,7 +107,7 @@ export function CartDrawer() {
                     {/* Product Image */}
                     <div className="flex-shrink-0">
                       <img
-                        src={item.image || "/placeholder.svg"}
+                        src={item.image?.startsWith("http") ? item.image : `${BASE_URL}${item.image}`}
                         alt={`Product ${item.id}`}
                         className="w-16 h-16 object-cover rounded-md border"
                       />
@@ -178,4 +188,4 @@ export function CartDrawer() {
       </div>
     </>
   )
-            }
+      }
