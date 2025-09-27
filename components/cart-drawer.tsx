@@ -36,7 +36,7 @@ export function CartDrawer() {
 
     try {
       // prepend full domain for email images
-      const frontendBaseUrl = "https://lumeax.vercel.com" // change to your real frontend domain
+      const frontendBaseUrl = "https://lumeax.vercel.app" // change to your real frontend domain
       const itemsWithAbsoluteUrls = state.items.map((item) => ({
         ...item,
         image: item.image ? `${frontendBaseUrl}${item.image}` : `${frontendBaseUrl}/placeholder.svg`,
