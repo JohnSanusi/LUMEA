@@ -9,15 +9,15 @@ import { ShoppingCart, X, Plus, Minus, Trash2 } from "lucide-react"
 export function CartDrawer() {
   const [isOpen, setIsOpen] = useState(false)
   const [phone, setPhone] = useState("")
-  const { state, dispatch } = useCart()
-
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
 
-  const BASE_URL = "https://lumea-frontend.vercel.app" // 👈 update this
+  const { state, dispatch } = useCart()
 
   const updateQuantity = (id: string, quantity: number) => {
-    dispatch({ type: "UPDATE_QUANTITY", payload: { id, quantity } })
+    if (quantity > 0) {
+      dispatch({ type: "UPDATE_QUANTITY", payload: { id, quantity } })
+    }
   }
 
   const removeItem = (id: string) => {
@@ -37,20 +37,13 @@ export function CartDrawer() {
     setIsSubmitting(true)
     setSubmitStatus("idle")
 
-    const normalizedItems = state.items.map((item) => ({
-      ...item,
-      image: item.image?.startsWith("http")
-        ? item.image
-        : `${BASE_URL}${item.image}`,
-    }))
-
     try {
       const res = await fetch("https://lumea-backend.onrender.com/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone,
-          items: normalizedItems,
+          items: state.items,
           totalItems: state.itemCount,
         }),
       })
@@ -59,6 +52,7 @@ export function CartDrawer() {
         setSubmitStatus("success")
         clearCart()
         setIsOpen(false)
+        setPhone("")
       } else {
         setSubmitStatus("error")
       }
@@ -99,7 +93,7 @@ export function CartDrawer() {
         </div>
 
         {/* Content */}
-        <div className="h-[calc(100vh-220px)] overflow-y-auto p-4">
+        <div className="h-[calc(100vh-200px)] overflow-y-auto p-4">
           {state.items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
@@ -110,7 +104,58 @@ export function CartDrawer() {
             <div className="space-y-4">
               {state.items.map((item) => (
                 <div key={item.id} className="bg-card border rounded-lg p-4">
-                  {/* ... your cart item UI stays the same ... */}
+                  <div className="flex gap-3">
+                    {/* Product Image */}
+                    <div className="flex-shrink-0">
+                      <img
+                        src={`https://lumea-backend.onrender.com${item.image}`}
+                        alt={`Product ${item.id}`}
+                        className="w-16 h-16 object-cover rounded-md border"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "/placeholder.svg"
+                        }}
+                      />
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <h3 className="font-medium text-sm">Product #{item.id}</h3>
+                          <p className="text-xs text-muted-foreground capitalize">{item.category}</p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-destructive hover:text-destructive"
+                          onClick={() => removeItem(item.id)}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+
+                      {/* Quantity */}
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-7 w-7 bg-transparent"
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        >
+                          <Minus className="h-3 w-3" />
+                        </Button>
+                        <span className="w-8 text-center text-sm font-medium">{item.quantity}</span>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-7 w-7 bg-transparent"
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -134,14 +179,14 @@ export function CartDrawer() {
               <span className="font-bold text-lg">{state.itemCount}</span>
             </div>
 
-            {/* ✅ Status feedback */}
             {submitStatus === "success" && (
-              <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
-                Order placed successfully! We’ll contact you soon.
+              <div className="p-2 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+                Order placed successfully! We’ll contact you shortly.
               </div>
             )}
+
             {submitStatus === "error" && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+              <div className="p-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
                 Failed to place order. Please try again.
               </div>
             )}
@@ -163,4 +208,4 @@ export function CartDrawer() {
       </div>
     </>
   )
-          }
+        }
