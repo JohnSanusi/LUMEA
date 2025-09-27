@@ -11,13 +11,10 @@ export function CartDrawer() {
   const [phone, setPhone] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle")
-
   const { state, dispatch } = useCart()
 
   const updateQuantity = (id: string, quantity: number) => {
-    if (quantity > 0) {
-      dispatch({ type: "UPDATE_QUANTITY", payload: { id, quantity } })
-    }
+    dispatch({ type: "UPDATE_QUANTITY", payload: { id, quantity } })
   }
 
   const removeItem = (id: string) => {
@@ -38,12 +35,19 @@ export function CartDrawer() {
     setSubmitStatus("idle")
 
     try {
+      // prepend full domain for email images
+      const frontendBaseUrl = "https://lumeax.vercel.com" // change to your real frontend domain
+      const itemsWithAbsoluteUrls = state.items.map((item) => ({
+        ...item,
+        image: item.image ? `${frontendBaseUrl}${item.image}` : `${frontendBaseUrl}/placeholder.svg`,
+      }))
+
       const res = await fetch("https://lumea-backend.onrender.com/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           phone,
-          items: state.items,
+          items: itemsWithAbsoluteUrls,
           totalItems: state.itemCount,
         }),
       })
@@ -52,7 +56,6 @@ export function CartDrawer() {
         setSubmitStatus("success")
         clearCart()
         setIsOpen(false)
-        setPhone("")
       } else {
         setSubmitStatus("error")
       }
@@ -93,7 +96,7 @@ export function CartDrawer() {
         </div>
 
         {/* Content */}
-        <div className="h-[calc(100vh-200px)] overflow-y-auto p-4">
+        <div className="h-[calc(100vh-180px)] overflow-y-auto p-4">
           {state.items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
@@ -108,12 +111,9 @@ export function CartDrawer() {
                     {/* Product Image */}
                     <div className="flex-shrink-0">
                       <img
-                        src={`https://lumea-backend.onrender.com${item.image}`}
+                        src={item.image || "/placeholder.svg"} // works on site
                         alt={`Product ${item.id}`}
                         className="w-16 h-16 object-cover rounded-md border"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = "/placeholder.svg"
-                        }}
                       />
                     </div>
 
@@ -180,14 +180,14 @@ export function CartDrawer() {
             </div>
 
             {submitStatus === "success" && (
-              <div className="p-2 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
+              <div className="p-2 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
                 Order placed successfully! We’ll contact you shortly.
               </div>
             )}
 
             {submitStatus === "error" && (
-              <div className="p-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-                Failed to place order. Please try again.
+              <div className="p-2 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
+                 Failed to place order. Please try again.
               </div>
             )}
 
@@ -208,4 +208,4 @@ export function CartDrawer() {
       </div>
     </>
   )
-        }
+          }
